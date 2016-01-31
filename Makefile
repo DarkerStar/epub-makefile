@@ -75,16 +75,8 @@ srcdir := $(strip $(if $(strip $(srcdir)), $(srcdir), .))
 outdir := $(strip $(if $(strip $(outdir)), $(outdir), .))
 builddir := $(strip $(if $(strip $(builddir)), $(builddir), .))
 
-ifeq ($(srcdir),$(outdir))
-  $(error srcdir and outdir cannot be the same.)
-endif
-
 ifeq ($(srcdir),$(builddir))
   $(error srcdir and builddir cannot be the same.)
-endif
-
-ifeq ($(outdir),$(builddir))
-  $(error outdir and builddir cannot be the same.)
 endif
 
 metafilesdir := $(srcdir)$(strip $(if $(strip $(metafilesdir)),/$(metafilesdir)))
@@ -103,24 +95,31 @@ epub_content := $(opf) $(content)
 # This makes the book, and - if desired - the cover image and thumbnails.
 all : $(epub)
 
+# Pseudotarget to make sure partially-built objects are deleted.
+.DELETE_ON_ERROR :
+
 # The book make rule ###########################################################
-$(epub) : $(builddir)/mimetype $(addprefix $(builddir)/META-INF/,$(epub_metafiles)) $(addprefix $(builddir)/OEBPS/,$(epub_content))
-	@cd $(builddir) && $(call cmd_zip_create,$(book).epub)
-	@cd $(builddir) && $(call cmd_zip_store,$(book).epub,mimetype)
-	@cd $(builddir) && for f in $(addprefix META-INF/,$(epub_metafiles)) ; \
+.INTERMEDIATE : ${builddir}/${book}.epub
+${builddir}/${book}.epub : ${builddir}/mimetype $(addprefix ${builddir}/META-INF/,${epub_metafiles}) $(addprefix ${builddir}/OEBPS/,${epub_content})
+	@cd ${builddir} && $(call cmd_zip_create,${book}.epub)
+	@cd ${builddir} && $(call cmd_zip_store,${book}.epub,mimetype)
+	@cd ${builddir} && for f in $(addprefix META-INF/,${epub_metafiles}) ; \
 	do \
-	  $(call cmd_zip_store,$(book).epub,$$f) ; \
+	  $(call cmd_zip_store,${book}.epub,$$f) ; \
 	done
-	@cd $(builddir) && for f in $(addprefix OEBPS/,$(epub_content)) ; \
+	@cd ${builddir} && for f in $(addprefix OEBPS/,${epub_content}) ; \
 	do \
-	  $(call cmd_zip_store,$(book).epub,$$f) ; \
+	  $(call cmd_zip_store,${book}.epub,$$f) ; \
 	done
-	@mv -t $(outdir) $(builddir)/$(book).epub
+
+${epub} : ${builddir}/${book}.epub
+	@mkdir -p -- "${@D}"
+	mv -f -- "$<" "$@"
 
 # Copying content documents ####################################################
 $(builddir)/OEBPS/% : $(srcdir)/%
-	@mkdir -p "${@D}"
-	cp -f "$<" "$@"
+	@mkdir -p -- "${@D}"
+	cp -f -- "$<" "$@"
 
 # Generate mimetype file #######################################################
 $(builddir)/mimetype : | $(builddir)
