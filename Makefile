@@ -1,6 +1,6 @@
 ################################################################################
-# Makefile for generating EPUB 30 ebooks from content sources.                 #
-# Copyright (C) 2016  Mark A. Gibbs                                            #
+# Makefile for generating EPUB 3.0 e-books from content sources.               #
+# Copyright (C) 2013-2015  Mark A. Gibbs                                       #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
 # it under the terms of the GNU General Public License as published by         #
@@ -119,7 +119,8 @@ $(epub) : $(builddir)/mimetype $(addprefix $(builddir)/META-INF/,$(epub_metafile
 
 # Copying content documents ####################################################
 $(builddir)/OEBPS/% : $(srcdir)/%
-	mkdir -p $(dir $@) && cp $< $@
+	@mkdir -p "${@D}"
+	cp -f "$<" "$@"
 
 # Generate mimetype file #######################################################
 $(builddir)/mimetype : | $(builddir)
