@@ -1,6 +1,6 @@
 ################################################################################
 # Makefile for generating EPUB 3.0 e-books from content sources.               #
-# Copyright (C) 2013-2015  Mark A. Gibbs                                       #
+# Copyright (C) 2016  Mark A. Gibbs                                            #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
 # it under the terms of the GNU General Public License as published by         #
@@ -30,7 +30,7 @@
 # (if you have set up the correct options in "book.mk").                       #
 #                                                                              #
 # For more options and information check the README at:                        #
-#   https://github.com/DarkerStar/epub-build-makefile                          #
+#   https://github.com/DarkerStar/epub-makefile                                #
 #                                                                              #
 ################################################################################
 
