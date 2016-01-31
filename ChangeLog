@@ -1,0 +1,27 @@
+2016-01-30  Mark A. Gibbs  <indi.in.the.wired@gmail.com>
+     
+     * COPYING: New project copyright documentaion.
+     Contains text of GPL3 from http://www.gnu.org/copyleft/gpl.html pages.
+     
+     * AUTHORS: New project contributor records.
+     
+     * THANKS: New project contributor records.
+     
+     * README: New package information and documentation file.
+     
+     * README.md: New package information and documentation file.
+     
+     * ChangeLog: New project change log.
+     
+     * INSTALL: New installation instructions file.
+     
+     * NEWS: New project history file.
+     
+     * Makefile: New makefile.
+     
+     * book.mk: New sample settings file.
+
+
+# Copyright 2016 Mark A. Gibbs
+# Copying and distribution of this file, with or without modification, are
+# permitted provided the copyright notice and this notice are preserved.

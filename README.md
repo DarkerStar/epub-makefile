@@ -1,0 +1,585 @@
+EPUB building makefile
+======================
+
+
+What is it?
+-----------
+
+It is a makefile, designed to make building EPUB 3 books easier.
+
+
+### Okay, but what is a "makefile"?
+
+Well, there is a program called "`make`" that programmers use to build
+software out of complex dependency trees of source files. In the
+simplest terms, `make` understands the relationship where a file
+*depends* on other files... such as an ebook file depending on a chapter
+file, and a chapter file depending on a section file. `make` understands
+that dependency chain - it understands that if the section file changes,
+the chapter has to be updated, and if the chapter has to be updated so
+too does the ebook itself.
+
+The power of `make` is twofold. First, it can exploit its knowledge of
+the dependency tree to automate the construction of the ebook. When you
+edit a paragraph in a section file, you don't need to remember to update
+the enclosing chapter, or the book itself. `make` knows to do that.
+
+Second, `make` can not only figure out what has to be updated... it can
+figure out what *doesn't* have to be updated. When you update a section
+in chapter 42, you don't need to update chapters 1-41 or 43-200... you
+*just* need to update chapter 42, and the book itself. This can save
+you *hours* of time when developing complex books.
+
+That's just the tip of the iceberg. There's so much more that `make`
+brings to the plate. For example, modern versions can use their
+knowledge of the dependency tree to figure out when it is possible to
+build things *simultaneously*. This can almost *double* - or on quad
+cores, possibly even *quadruple* the speed at which your book can be
+built. It can also be extended, in both directions. For example, you can
+have parts of your book automatically generated - such as the table of
+contents, indexes, or even have up-to-the-minute statistics
+automatically generated from any source and included - and your book
+will *still* build automatically and efficiently. In the other
+direction, you can have other things depending on your book; for
+example, you can build an entire library - complete with up-to-date
+books - with a single click. (In fact, that's literally what I use it
+for; and not just to build the library, but to build a website indexing
+it, too.)
+
+Even if you don't need auto-generated book content, and you're not
+building a whole library, building a single book with `make` will be
+faster, easier, and less error-prone than trying to do it manually.
+
+Okay, now that you understand what `make` is, I can actually answer
+the question at hand. A "makefile" is what describes the dependency
+structure of a project. For each file in the project, it describes what
+that file depends on, and how to update it. When you run `make` for a
+project, `make` looks for a makefile - usually named `Makefile` - and
+reads that to discover all about the dependency tree of your project.
+
+
+### That all sounds lovely, but how do I use `make`?
+
+Assuming you have a project with a makefile, and assuming that makefile
+has one of the standard names - `Makefile` is the most common - all you
+have to do is go into the project's directory, and run the command:
+`make`.
+
+That's all there is to it.
+
+Presumably your project is an EPUB 3 ebook. Well, all you'd have to do
+is go into the folder containing your book's content (the text,
+illustrations, OPF, and so on), and run `make`. Assuming you have all
+the necessary tools, and assuming there are no errors, when `make` is
+done your book will be completely and correctly built.
+
+
+### So what exactly is this project?
+
+Well, normally you have to *write* a makefile for a project (such as
+your ebook), describing the project's structure and all the
+dependencies. This can be easy or eldritch black art depending on what
+you're doing.
+
+Happily, that's not an issue for you. I've done all the work already.
+
+This project is really just the file named `Makefile`. Everything else
+is just documentation and attribution stuff required by the
+[GNU coding standards](https://www.gnu.org/prep/standards/standards.html).
+
+All you need to do - literally - is copy the `Makefile` from this
+project into your book project folder, add a `book.mk` file with some
+simple configuration settings, and you're done. Now you can run `make`
+in your book project folder, and watch your book get built.
+
+
+### That's it?
+
+That's literally it, one-two-three:
+
+1.  Copy `Makefile` from this project into your book project folder;
+2.  create `book.mk` in your book project folder, and fill in the
+    required settings; then
+3.  run `make` in your book project folder.
+
+See the "Documentation" section in this file below for what you need to
+put in your `book.mk` file, or check out the sample `book.mk` included
+in this project.
+
+Also see the "Requirements" section to make sure you have all the
+necessary programs installed. (You probably do unless you're on Windows,
+in which case you might need to download GNU `make`, and possibly a
+(honestly) POSIX-compatible shell.)
+
+Finally, I recommend checking out the "Extra features" section. The
+makefile provides some handy additional features, like integrated ebook
+validation using [epubcheck](https://github.com/IDPF/epubcheck).
+
+
+Latest version
+--------------
+
+The latest release can be downloaded from the [github project downloads
+page](https://github.com/DarkerStar/epub-makefile/downloads).
+
+
+
+Documentation
+-------------
+
+An EPUB 3 file is basically a zip file, but one that has been created in
+a particular way, with specific required files and directories, and a
+particular ordering for how files are added. Recreating it over and over
+during the development process is tedious and error prone. A script to
+generate the required files and build the container is a good start, but
+a makefile is even better, because it can use make's dependency checking
+to recreate only what is necessary, and because it can integrate with
+a larger authoring or publication system. That is the idea behind the
+EPUB building makefile.
+
+To build an EPUB ebook using the makefile, first you need to create the
+book's content (sorry, I can't make a makefile to completely write a
+book for you... yet).
+
+You lay out your content in a directory structure that makes sense to
+you - for example you might lay out your book like this:
+
+*   `content.opf`
+*   `cover.svg`
+*   `nav.xhtml`
+*   `chapter-1.xhtml`
+*   `chapter-2.xhtml`
+*   `epilogue.xhtml`
+*   `style.css`
+
+Or, for a more complex book you may lay it out like this:
+
+*   `book.opf`
+*   `text`
+    *   `cover.xhtml`
+    *   `title-page.xhtml`
+    *   `preface.xhtml`
+    *   `table-of-contents.xhtml`
+    *   `introduction.xhtml`
+    *   `chapters`
+        *   `01-the_beginning.xhtml`
+        *   `02-the_beginning_continues.xhtml`
+        *   `03-the_beginning_ends.xhtml`
+    *   `appendices`
+        *   `glossary.xhtml`
+*   `style`
+    *   `frontmatter.css`
+    *   `content.css`
+    *   `font.woff`
+    *   `icon.svg`
+*   `images`
+    *   `cover.svg`
+    *   `photo.jpg`
+    *   `map.svg`
+
+(Note that you should always avoid spaces anywhere in your paths and
+filenames. This is just traditional, and good, practice when doing
+development of anything on computers. It's always wise to stick to
+letters, numbers, periods, and dashes in both your file and directory
+names.)
+
+Whatever your layout, all that is required is that your OPF package
+document (.opf) and content documents all conform to
+[the EPUB 3 standard](http://idpf.org/epub/301), and that any
+inter-document references are all relative (because if they were
+absolute, they would break when the documents are moved to the EPUB
+file). (Note that by doing this you are even able to view your book's
+content using a browser during development to get a preview of what the
+final book will look like.)
+
+To make an EPUB out of your content, you have to copy the makefile in
+this package to a directory - preferably separate from your book's
+content, though this is not necessary - and create a `book.mk` file.
+In the `book.mk` file, you need to set four variables:
+
+*   `book`: this should be set to the name of the EPUB file you want to
+    create (without the `.epub` extension).
+*   `srcdir`: this should be set to the path that your book content is
+    in.
+*   `opf`: this should be set to the package document, relative to
+    `srcdir`.
+*   `content`: this should be set to the list of content documents you
+    want included in the book, relative to `srdir`.
+
+Let's use the first book layout above as an example. Suppose that it is
+in a directory named `content`, and the directory you want to work in is
+named `build`:
+
+*   `build`
+*   `content`
+    *   `content.opf`
+    *   `cover.svg`
+    *   `nav.xhtml`
+    *   `chapter-1.xhtml`
+    *   `chapter-2.xhtml`
+    *   `epilogue.xhtml`
+    *   `style.css`
+
+The first thing you have to do is put the makefile in the `build`
+directory, and make a `book.mk` file in the same directory:
+
+*   `build`
+    *   `Makefile`
+    *   `book.mk`
+*   `content`
+    *   `content.opf`
+    *   `cover.svg`
+    *   `nav.xhtml`
+    *   `chapter-1.xhtml`
+    *   `chapter-2.xhtml`
+    *   `epilogue.xhtml`
+    *   `style.css`
+
+Next you have to edit `book.mk` to set the four required variables.
+
+*   `book`: Let's suppose you want your book to be called `MyBook.epub`.
+    In that case, you'd set `book` to `MyBook`. (Note: you should avoid
+    spaces, as always. If you really want your book's name to have
+    spaces, you can rename the book later.)
+*   `srcdir`: The source directory is `content`, which is adjacent to
+    the directory the makefile is in, so this should be set to
+    `../content`.
+*   `opf`: this should be set to `content.opf`.
+*   `content`: this should be set to:
+    *   `cover.svg`
+    *   `nav.xhtml`
+    *   `chapter-1.xhtml`
+    *   `chapter-2.xhtml`
+    *   `epilogue.xhtml`
+    *   `style.css`
+
+So `book.mk` could look like this:
+
+```Makefile
+book = MyBook
+srcdir = ../content
+opf = content.opf
+content = cover.svg nav.xhtml chapter-1.xhtml chapter-2.xhtml \
+          epilogue.xhtml style.css
+```
+
+And that's it. Now all you have to do is `cd` to the build directory,
+and run `make`, and a few seconds later you will have an EPUB 3 file
+named `MyBook.epub` in the build directory, with your book's contents.
+Assuming your book contents were conforming, this will be a conforming
+EPUB 3 file.
+
+Extra features
+--------------
+
+### Non-book files are ignored
+
+Only the content files listed in the `content` variable will be included
+in the book. That means you're free to leave other files in your source
+directory tree if you like. For example, if you have an `.odt` document
+with notes for your book in your source tree like this:
+
+*   `build`
+    *   `Makefile`
+    *   `book.mk`
+*   `content`
+    *   `content.opf`
+    *   `cover.svg`
+    *   `nav.xhtml`
+    *   `chapter-1.xhtml`
+    *   `chapter-2.xhtml`
+    *   `epilogue.xhtml`
+    *   `style.css`
+    *   `book-notes.odt` (<- note)
+
+The `book-notes.odt` file will not be included in your book (you'll get
+the same book output as before). If you actually want the
+`book-notes.odt` file in your EPUB, you just need to add it to the list
+in the `content` variable.
+
+### Automatic SVG -> PNG conversion
+
+[SVG](https://www.w3.org/Graphics/SVG/) is a widely-used graphics format
+that excels at charts, diagrams, and logos (it isn't for photographic
+images - for those you should use JPEG). SVG images are usually tiny in
+size, but will display with perfect crispness at any resolution, whether
+on a tiny eReader screen or a large, professionally-printed poster.
+
+SVG is one of the core EPUB 3 graphics types (it was also core in EPUB
+2), which means readers **MUST** support SVG. Sadly, there are many
+shitty eReaders that don't support it, or don't support it well -
+especially for covers.
+
+Luckily, [PNG](https://www.w3.org/Graphics/PNG/) - another widely-used
+standard graphics format, and another core EPUB graphics type - *is*
+universally supported. PNGs are less crisp than SVGs, and often much
+much larger, but we'll take what we can.
+
+It is up to you to set up your ebook to fall back to PNG for readers
+that don't (properly) support SVG. But assuming you've done that, it
+seems silly to have to make identical SVG and PNG versions of every
+relevant image, or to have to manually generate one from the other
+before building the book.
+
+Thus, the makefile will automatically generate any missing PNGs from
+SVGs with the same base name. So if you need "`images/room-layout.png`",
+and you have "`images/room-layout.svg`", the former will be
+automatically generated from the latter.
+
+Here's another example. Suppose you have the same setup as before:
+
+*   `build`
+    *   `Makefile`
+    *   `book.mk`
+*   `content`
+    *   `content.opf`
+    *   `cover.svg`
+    *   `nav.xhtml`
+    *   `chapter-1.xhtml`
+    *   `chapter-2.xhtml`
+    *   `epilogue.xhtml`
+    *   `style.css`
+
+The content of the `book.mk` file is the same, too:
+
+```Makefile
+book = MyBook
+srcdir = ../content
+opf = content.opf
+content = cover.svg nav.xhtml chapter-1.xhtml chapter-2.xhtml \
+          epilogue.xhtml style.css
+```
+
+But now, add the file `cover.png` to the `content` list:
+
+```Makefile
+book = MyBook
+srcdir = ../content
+opf = content.opf
+content = cover.svg nav.xhtml chapter-1.xhtml chapter-2.xhtml \
+          epilogue.xhtml style.css cover.png
+```
+
+`cover.png` doesn't exist, but it has the same base name as `cover.svg`,
+so when you `make` the book, `cover.png` will be automatically generated
+from `cover.svg`.
+
+If you don't want SVG files in your ebook at all - you only intend to
+support legacy readers, and you don't care about graphics quality -
+just don't add the SVG to the content list. If there's a PNG in the
+content list, it will be generated from an SVG with the same base name,
+even if that SVG isn't going to be included in the book.
+
+A couple things to note:
+
+*   You need [ImageMagick](http://imagemagick.org/),
+    [Inkscape](https://inkscape.org/en/), and
+    [pngcrush](http://pmt.sourceforge.net/pngcrush/index.html)
+    installed, by default. (Details on which versions are in
+    "Requirements". It is possible to override any of these in your
+    `book.mk`, but that is advanced stuff beyond the scope of this
+    documentation.)
+*   The size of the PNG will be the same as the intrinsic size of the
+    SVG. SVGs render perfectly at any size, so sometimes it isn't
+    obvious what the intrinsic size is. Make sure the intrinsic size of
+    the SVG is (roughly) the size that is needed in the book, or your
+    PNG will be fuzzy or unnecessarily huge.
+
+
+### Metadata files
+
+Some EPUB required files are automatically generated during the
+build, such as the `mimetype` and `META-INF/container.xml`. The
+auto-generated `META-INF/container.xml` file is normally good enough,
+but if you have a reason why you want to supply your own, you can. You
+just need to do one or two things:
+
+*   In the `book.mk` file, define the variable `metafiles`, and set it
+    to equal `container.xml`.
+*   If `container.xml` isn't in `srcdir`, you will also need to define
+    the variable `metafilesdir` and set it to the path to where
+    `container.xml` is, relative to `srcdir`.
+
+You also need to take these steps if you want to include other custom
+metafiles in your ebook, for things like DRM, encryption, or digital
+signatures. (The EPUB 3 standard describes several such metafiles.)
+
+Note that if you are making a custom `container.xml`, remember that all
+the content documents (including the package document) will be in a
+directory named `OEBPS` (as recommended by the EPUB 3 standard).
+
+
+### `epubcheck` validation
+
+You can use [epubcheck](https://github.com/IDPF/epubcheck) to validate
+your ebook (which is a good idea, really). First you have to do is
+download the epubcheck jarfile (and, naturally, you'll need java). Then
+you have two options for setting the path:
+
+*   You can set the `epubcheck` variable in your `book.mk` to the path
+    to the epubcheck jarfile; or
+*   You can set an environment variable in your shell `EPUBCHECK_JAR` to
+    the path to the epubcheck jarfile.
+
+Once you do that, you can run `make check`, and first your book will
+built (if necessary), then epubcheck will be run to validate it.
+
+
+Complex example
+---------------
+
+Finally, let's cover a more complex example.
+
+*   `Makefile`
+*   `book.mk`
+*   `out`
+*   `src`
+    *   `meta`
+        *   `book.opf`
+    *   `text`
+        *   `cover.xhtml`
+        *   `title-page.xhtml`
+        *   `preface.xhtml`
+        *   `table-of-contents.xhtml`
+        *   `introduction.xhtml`
+        *   `chapters`
+            *   `01-the_beginning.xhtml`
+            *   `02-the_beginning_continues.xhtml`
+            *   `03-the_beginning_ends.xhtml`
+        *   `appendices`
+            *   `glossary.xhtml`
+    *   `style`
+        *   `frontmatter.css`
+        *   `content.css`
+        *   `font.woff`
+        *   `icon.svg`
+    *   `images`
+        *   `cover.svg`
+        *   `photo.jpg`
+        *   `map.svg`
+*   `meta`
+    *   `signatures.xml`
+*   `epubcheck`
+    *   `epubcheck.jar`
+
+`Makefile` is, of course, the EPUB building makefile in this package.
+
+`book.mk` is the configuration file you create.
+
+`out` is the directory you want the final EPUB placed in - set the
+variable `outdir` in `book.mk` to specify it (note that `outdir` is
+relative to the location of `Makefile`, not `srcdir`.)
+
+`src` contains your book content (including the package document, in
+this example).
+
+`meta` contains a special file used to digitally sign your book - as
+described in the EPUB 3 specification, this has to go in `META-INF`.
+
+The `book.mk` might look like this:
+
+```Makefile
+# The name of the generated EPUB ebook will be "the-book.epub".
+book = the-book
+
+# These are the book source and output directories.
+srcdir = src
+outdir = out
+
+# This is the EPUB's OPF file.
+opf = meta/book.opf
+
+# These are all the content files of the book - that's all text
+# (including non-body text, like a glossary and the preface), all
+# images, all styling information... *everything*.
+# 
+# All files are listed relative to srcdir.
+content = text/cover.xhtml \
+          text/title-page.xhtml \
+          text/preface.xhtml \
+          text/table-of-contents.xhtml \
+          text/introduction.xhtml \
+          text/chapters/01-the_beginning.xhtml \
+          text/chapters/02-the_beginning_continues.xhtml \
+          text/chapters/03-the_beginning_ends.xhtml \
+          text/appendices/glossary.xhtml \
+          style/frontmatter.css \
+          style/content.css \
+          style/font.woff \
+          style/icon.svg \
+          images/cover.svg \
+          images/photo.jpg \
+          images/map.svg
+
+# This is for the custom metafile for digital signatures.
+metafiles    = signatures.xml
+metafilesdir = ../meta
+
+# This is for epubcheck validation
+epubcheck = epubcheck/epubcheck.jar
+```
+
+And now you can even build that complex book with a simple `make`
+command, and validate it with epubcheck by using `make check`.
+
+
+Requirements
+------------
+
+To use this makefile, you will need:
+
+*   A relatively recent version of
+    [GNU Make](https://www.gnu.org/software/make/).
+    I would recommend GNU Make 4.0 (released October 2013).
+*   By default,
+    [Info-Zip's `zip` utility](http://www.info-zip.org/Zip.html) or any
+    other ZIP utility with a compatible interface. I would recommend
+    v3.0 (released July 2008).
+*   A minimally POSIX-compatible command shell to run `make` in, of
+    course. (Note that advanced shells like Bash are not required - the
+    makefile uses basic `sh`.)
+
+That's it for the requirements, but to use some extra features, you will
+need extra tools.
+
+If you want to use automatic SVG to PNG generation, you will need (by
+default):
+
+*   [ImageMagick](http://imagemagick.org/) 6.7 or better. Only the
+    `mogrify` utility with basic `alpha` options is used.
+*   [Inkscape](https://inkscape.org/en/) 0.48 or better. Only the
+    command-line interface is used. (Inkscape is used to convert from
+    SVG to PNG. ImageMagick can also do this conversion, as can `rsvg`,
+    but Inkscape has the best SVG support and gives the best results by
+    *far*.)
+*   [pngcrush](http://pmt.sourceforge.net/pngcrush/index.html) 1.6 or
+    better. This is used to optimize the PNG files created.
+
+If you want to do EPUB validation, you will need:
+
+*   [Epubcheck](https://github.com/IDPF/epubcheck). You should get the
+    latest version. Note where you put the jarfile, because you will
+    need to either set the environment variable `EPUBCHECK_JAR`, or the
+    `epubcheck` variable in `book.mk`, to the path to that jarfile.
+
+If you want to use some tool other than Info-Zip's `zip`, ImageMagick,
+Inkscape, and/or epubcheck, you can do so without modifying the makefile
+by setting the correct variable(s) in your `book.mk`. For now, I'll
+leave this feature undocumented (though if you're a `make` expert,
+you'll figure it out easily).
+
+
+Licensing
+---------
+
+All code and content in this package is licenced under the GPLv3, as
+described in the COPYING file.
+
+For more details, please see the file called "COPYING".
+
+
+Contacts
+--------
+
+For contact information, check out the
+[github project page](https://github.com/DarkerStar/epub-makefile).
