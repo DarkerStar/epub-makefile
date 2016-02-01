@@ -43,9 +43,9 @@ builddir := build
 epubcheck := $(if $(strip $(EPUBCHECK_JAR)),$(EPUBCHECK_JAR),epubcheck-3.0.1)
 
 # Set up commands to be used ###################################################
-cmd_zip_create = rm -f -- $(1)
-cmd_zip_store  = zip -X $(1) $(2)
-cmd_zip_add    = zip -rgD $(1) $(2)
+cmd_zip_create = rm -f -- "$(1)"
+cmd_zip_store  = zip -X -Z store "$(1)" $(2)
+cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 
 define cmd_pngcrush =
 	pngcrush -rem alla -q $(1) $(1)~
@@ -112,11 +112,11 @@ $(epub) : $(builddir)/mimetype $(addprefix $(builddir)/META-INF/,$(epub_metafile
 	@cd $(builddir) && $(call cmd_zip_store,$(book).epub,mimetype)
 	@cd $(builddir) && for f in $(addprefix META-INF/,$(epub_metafiles)) ; \
 	do \
-	  $(call cmd_zip_store,$(book).epub,$$f) ; \
+	  $(call cmd_zip_add,$(book).epub,$$f) ; \
 	done
 	@cd $(builddir) && for f in $(addprefix OEBPS/,$(epub_content)) ; \
 	do \
-	  $(call cmd_zip_store,$(book).epub,$$f) ; \
+	  $(call cmd_zip_add,$(book).epub,$$f) ; \
 	done
 	@mv -t $(outdir) $(builddir)/$(book).epub
 
