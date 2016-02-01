@@ -1,5 +1,8 @@
 ################################################################################
 # Makefile for generating EPUB 30 ebooks from content sources.                 #
+#                                                                              #
+# Version 1.0.1                                                                #
+#                                                                              #
 # Copyright (C) 2016  Mark A. Gibbs                                            #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
