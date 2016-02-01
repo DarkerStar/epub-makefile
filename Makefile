@@ -122,39 +122,39 @@ $(builddir)/OEBPS/% : $(srcdir)/%
 	cp -f -- "$<" "$@"
 
 # Generate mimetype file #######################################################
-$(builddir)/mimetype : | $(builddir)
+${builddir}/mimetype :
 	-@echo "Generating mimetype... "
+	@mkdir -p -- "${@D}"
 	@printf "application/epub+zip" >$@
 
 # Generate META-INF/container.xml file #########################################
-define generate_meta_inf_container =
-	-@echo "Generating META-INF/container.xml... "
-	$(file >$@,<?xml version="1.0"?>)
-	$(file >>$@,<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">)
-	$(file >>$@,$(tab)<rootfiles>)
-	$(foreach o,$(opf),$(file >>$@,$(tab)$(tab)<rootfile full-path="OEBPS/$(o)" media-type="application/oebps-package+xml"/>))
-	$(file >>$@,$(tab)</rootfiles>)
-	$(file >>$@,</container>)
-endef
+ifdef epub_metafiles_container_src
 
-$(builddir)/META-INF/container.xml : $(epub_metafiles_container_src) | $(builddir)/META-INF
-	$(if $(epub_metafiles_container_src),cp -f $< $@,$(call generate_meta_inf_container))
+${builddir}/META-INF/container.xml : ${epub_metafiles_container_src}
+	@mkdir -p -- "${@D}"
+	cp -f -- "${<}" "${@}"
+
+else
+
+${builddir}/META-INF/container.xml :
+	-@echo "Generating META-INF/container.xml... "
+	@mkdir -p -- "${@D}"
+	@{ \
+	  printf '<?xml version="1.0"?>\n' ; \
+	  printf '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n' ; \
+	  printf '\t<rootfiles>\n' ; \
+	  for o in ${opf} ; do \
+	    printf '\t\t<rootfile full-path="OEBPS/%s" media-type="application/oebps-package+xml"/>\n' "$${o}" ; \
+	   done ; \
+	  printf '\t</rootfiles>\n' ; \
+	  printf '</container>\n' ; \
+	} >"${@}"
+
+endif
 
 # Creating raster images from SVG ##############################################
 $(builddir)/OEBPS/%.png : $(builddir)/OEBPS/%.svg
 	$(call cmd_svg_to_png,$<,$@)
-
-# Creating directories #########################################################
-$(builddir)/OEBPS : | $(builddir)
-	-@echo "Creating OEBPS... "
-	@cd $(builddir) && mkdir OEBPS
-
-$(builddir)/META-INF : | $(builddir)
-	-@echo "Creating META-INF... "
-	@cd $(builddir) && mkdir META-INF
-
-$(builddir) :
-	@mkdir $(builddir)
 
 # Check target #################################################################
 check : $(epub)
