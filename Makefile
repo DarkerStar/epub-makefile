@@ -40,7 +40,7 @@
 # Variable defaults (will probably be overridden) ##############################
 builddir := build
 
-epubcheck := $(if $(strip $(EPUBCHECK_JAR)),$(EPUBCHECK_JAR),epubcheck-3.0.1)
+epubcheck := $(if $(strip ${EPUBCHECK_JAR}),${EPUBCHECK_JAR},epubcheck.jar)
 
 # Set up commands to be used ###################################################
 cmd_zip_create = rm -f -- "$(1)"
