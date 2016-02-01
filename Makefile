@@ -136,14 +136,14 @@ ${builddir}/META-INF/container.xml :
 	-@echo "Generating META-INF/container.xml... "
 	@mkdir -p -- "${@D}"
 	@{ \
-	  printf '<?xml version="1.0"?>\n' ; \
-	  printf '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n' ; \
-	  printf '\t<rootfiles>\n' ; \
+	  echo '<?xml version="1.0"?>' ; \
+	  echo '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' ; \
+	  echo '	<rootfiles>' ; \
 	  for o in ${opf} ; do \
 	    printf '\t\t<rootfile full-path="OEBPS/%s" media-type="application/oebps-package+xml"/>\n' "$${o}" ; \
 	   done ; \
-	  printf '\t</rootfiles>\n' ; \
-	  printf '</container>\n' ; \
+	  echo '	</rootfiles>' ; \
+	  echo '</container>' ; \
 	} >"${@}"
 
 endif
