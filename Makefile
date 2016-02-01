@@ -1,5 +1,8 @@
 ################################################################################
-# Makefile for generating EPUB 3.0 e-books from content sources.               #
+# Makefile for generating EPUB 3 ebooks from content sources.                  #
+#                                                                              #
+# Version 1.0.1                                                                #
+#                                                                              #
 # Copyright (C) 2016  Mark A. Gibbs                                            #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
@@ -40,9 +43,9 @@ builddir := build
 epubcheck := $(if $(strip $(EPUBCHECK_JAR)),$(EPUBCHECK_JAR),epubcheck-3.0.1)
 
 # Set up commands to be used ###################################################
-cmd_zip_create = rm -f -- $(1)
-cmd_zip_store  = zip -X $(1) $(2)
-cmd_zip_add    = zip -rgD $(1) $(2)
+cmd_zip_create = rm -f -- "$(1)"
+cmd_zip_store  = zip -X -Z store "$(1)" $(2)
+cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 
 define cmd_pngcrush =
 	pngcrush -rem alla -q $(1) $(1)~
@@ -105,11 +108,11 @@ ${builddir}/${book}.epub : ${builddir}/mimetype $(addprefix ${builddir}/META-INF
 	@cd ${builddir} && $(call cmd_zip_store,${book}.epub,mimetype)
 	@cd ${builddir} && for f in $(addprefix META-INF/,${epub_metafiles}) ; \
 	do \
-	  $(call cmd_zip_store,${book}.epub,$$f) ; \
+	  $(call cmd_zip_add,${book}.epub,$$f) ; \
 	done
 	@cd ${builddir} && for f in $(addprefix OEBPS/,${epub_content}) ; \
 	do \
-	  $(call cmd_zip_store,${book}.epub,$$f) ; \
+	  $(call cmd_zip_add,${book}.epub,$$f) ; \
 	done
 
 ${epub} : ${builddir}/${book}.epub
