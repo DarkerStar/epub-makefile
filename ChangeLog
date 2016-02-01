@@ -1,3 +1,17 @@
+2016-01-31  Mark A. Gibbs  <indi.in.the.wired@gmail.com>
+     
+     * NEWS: Updated for 1.0.1.
+     
+     * Makefile: (cmd_zip_create): Added quotes around ebook name
+     parameter.
+     (cmd_zip_store): Added missing store parameter.
+     Added quotes around ebook name parameter.
+     (cmd_zip_add): Added "no extra fields" parameter.
+     Added quotes around ebook name parameter.
+     (epub target): Changed cmd_zip_store to cmd_zip_add for all files
+     other than mimetype.
+
+
 2016-01-30  Mark A. Gibbs  <indi.in.the.wired@gmail.com>
      
      * COPYING: New project copyright documentaion.

@@ -1,3 +1,23 @@
+Version 1.0.1 ----------------------------------------------------- [2016-01-31]
+
+*   [BUGFIX] The "store" zip command was used for all files, not just
+    `mimetype`. This has been fixed; all files other than `mimetype`
+    now use the "add" command.
+    
+*   [BUGFIX] The "store" zip command didn't actually store (though it
+    just happened to work for `mimetype` because `mimetype` was too
+    small to compress regardless). Now the "store" command actually
+    stores.
+    
+*   [PERFORMANCE] The "no extra fields" flag was added to the zip "add"
+    command. This shaves a few bytes off each entry in the zip; I got
+    about a ~1% decrease in the final ebook size. (In practice, you
+    shouldn't notice any improvement over 1.0.0, because due to bugs
+    1.0.0 wasn't using the zip "add" command anyway - it was using the
+    zip "store" command for all files, which never added the extra
+    fields.)
+
+
 Version 1.0.0 ----------------------------------------------------- [2016-01-30]
 
 *   EPUB building makefile first release.
