@@ -66,10 +66,6 @@ include book.mk
 # Recommended by the manual
 SHELL := /bin/sh
 
-# Handy variables for formatting
-empty :=
-tab   := $(empty)	$(empty)
-
 # Make sure all directories are legit
 srcdir := $(strip $(if $(strip $(srcdir)), $(srcdir), .))
 outdir := $(strip $(if $(strip $(outdir)), $(outdir), .))
