@@ -47,10 +47,7 @@ cmd_zip_create = rm -f -- "$(1)"
 cmd_zip_store  = zip -X -Z store "$(1)" $(2)
 cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 
-define cmd_pngcrush =
-	pngcrush -rem alla -q $(1) $(1)~
-	rm -f -- $(1) && mv $(1)~ $(1)
-endef
+cmd_pngcrush = pngcrush -rem alla -q "${1}" "${1}~" && mv -f -- "${1}~" "${1}"
 
 define cmd_svg_to_png =
 	inkscape $(1) --export-png=$(2)
