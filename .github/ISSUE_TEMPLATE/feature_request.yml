@@ -1,0 +1,21 @@
+name: Feature request
+description: Request a new feature
+labels: enhancement
+assignees: DarkerStar
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What new feature would you like to see?
+    validations:
+      required: true
+
+  - type: textarea
+    id: ideas
+    attributes:
+      label: Do you have any ideas for how this feature might be implemented?
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Have you considered any alternatives?

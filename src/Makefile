@@ -1,5 +1,5 @@
 ################################################################################
-# Makefile for generating EPUB 30 ebooks from content sources.                 #
+# Makefile for generating EPUB 3 ebooks from content sources.                  #
 #                                                                              #
 # Version 1.0.1                                                                #
 #                                                                              #
@@ -33,24 +33,21 @@
 # (if you have set up the correct options in "book.mk").                       #
 #                                                                              #
 # For more options and information check the README at:                        #
-#   https://github.com/DarkerStar/epub-build-makefile                          #
+#   https://github.com/DarkerStar/epub-makefile                                #
 #                                                                              #
 ################################################################################
 
 # Variable defaults (will probably be overridden) ##############################
 builddir := build
 
-epubcheck := $(if $(strip $(EPUBCHECK_JAR)),$(EPUBCHECK_JAR),epubcheck-3.0.1)
+epubcheck := $(if ${EPUBCHECK_JAR},${EPUBCHECK_JAR},epubcheck.jar)
 
 # Set up commands to be used ###################################################
 cmd_zip_create = rm -f -- "$(1)"
 cmd_zip_store  = zip -X -Z store "$(1)" $(2)
 cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 
-define cmd_pngcrush =
-	pngcrush -rem alla -q $(1) $(1)~
-	rm -f -- $(1) && mv $(1)~ $(1)
-endef
+cmd_pngcrush = pngcrush -rem alla -q "${1}" "${1}~" && mv -f -- "${1}~" "${1}"
 
 define cmd_svg_to_png =
 	inkscape $(1) --export-png=$(2)
@@ -69,25 +66,13 @@ include book.mk
 # Recommended by the manual
 SHELL := /bin/sh
 
-# Handy variables for formatting
-empty :=
-tab   := $(empty)	$(empty)
-
 # Make sure all directories are legit
 srcdir := $(strip $(if $(strip $(srcdir)), $(srcdir), .))
 outdir := $(strip $(if $(strip $(outdir)), $(outdir), .))
 builddir := $(strip $(if $(strip $(builddir)), $(builddir), .))
 
-ifeq ($(srcdir),$(outdir))
-  $(error srcdir and outdir cannot be the same.)
-endif
-
 ifeq ($(srcdir),$(builddir))
   $(error srcdir and builddir cannot be the same.)
-endif
-
-ifeq ($(outdir),$(builddir))
-  $(error outdir and builddir cannot be the same.)
 endif
 
 metafilesdir := $(srcdir)$(strip $(if $(strip $(metafilesdir)),/$(metafilesdir)))
@@ -106,58 +91,66 @@ epub_content := $(opf) $(content)
 # This makes the book, and - if desired - the cover image and thumbnails.
 all : $(epub)
 
+# Pseudotarget to make sure partially-built objects are deleted.
+.DELETE_ON_ERROR :
+
 # The book make rule ###########################################################
-$(epub) : $(builddir)/mimetype $(addprefix $(builddir)/META-INF/,$(epub_metafiles)) $(addprefix $(builddir)/OEBPS/,$(epub_content))
-	@cd $(builddir) && $(call cmd_zip_create,$(book).epub)
-	@cd $(builddir) && $(call cmd_zip_store,$(book).epub,mimetype)
-	@cd $(builddir) && for f in $(addprefix META-INF/,$(epub_metafiles)) ; \
+.INTERMEDIATE : ${builddir}/${book}.epub
+${builddir}/${book}.epub : ${builddir}/mimetype $(addprefix ${builddir}/META-INF/,${epub_metafiles}) $(addprefix ${builddir}/OEBPS/,${epub_content})
+	@cd ${builddir} && $(call cmd_zip_create,${book}.epub)
+	@cd ${builddir} && $(call cmd_zip_store,${book}.epub,mimetype)
+	@cd ${builddir} && for f in $(addprefix META-INF/,${epub_metafiles}) ; \
 	do \
-	  $(call cmd_zip_add,$(book).epub,$$f) ; \
+	  $(call cmd_zip_add,${book}.epub,$$f) ; \
 	done
-	@cd $(builddir) && for f in $(addprefix OEBPS/,$(epub_content)) ; \
+	@cd ${builddir} && for f in $(addprefix OEBPS/,${epub_content}) ; \
 	do \
-	  $(call cmd_zip_add,$(book).epub,$$f) ; \
+	  $(call cmd_zip_add,${book}.epub,$$f) ; \
 	done
-	@mv -t $(outdir) $(builddir)/$(book).epub
+
+${epub} : ${builddir}/${book}.epub
+	@mkdir -p -- "${@D}"
+	mv -f -- "$<" "$@"
 
 # Copying content documents ####################################################
 $(builddir)/OEBPS/% : $(srcdir)/%
-	mkdir -p $(dir $@) && cp $< $@
+	@mkdir -p -- "${@D}"
+	cp -f -- "$<" "$@"
 
 # Generate mimetype file #######################################################
-$(builddir)/mimetype : | $(builddir)
+${builddir}/mimetype :
 	-@echo "Generating mimetype... "
+	@mkdir -p -- "${@D}"
 	@printf "application/epub+zip" >$@
 
 # Generate META-INF/container.xml file #########################################
-define generate_meta_inf_container =
-	-@echo "Generating META-INF/container.xml... "
-	$(file >$@,<?xml version="1.0"?>)
-	$(file >>$@,<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">)
-	$(file >>$@,$(tab)<rootfiles>)
-	$(foreach o,$(opf),$(file >>$@,$(tab)$(tab)<rootfile full-path="OEBPS/$(o)" media-type="application/oebps-package+xml"/>))
-	$(file >>$@,$(tab)</rootfiles>)
-	$(file >>$@,</container>)
-endef
+ifdef epub_metafiles_container_src
 
-$(builddir)/META-INF/container.xml : $(epub_metafiles_container_src) | $(builddir)/META-INF
-	$(if $(epub_metafiles_container_src),cp -f $< $@,$(call generate_meta_inf_container))
+${builddir}/META-INF/container.xml : ${epub_metafiles_container_src}
+	@mkdir -p -- "${@D}"
+	cp -f -- "${<}" "${@}"
+
+else
+
+${builddir}/META-INF/container.xml :
+	-@echo "Generating META-INF/container.xml... "
+	@mkdir -p -- "${@D}"
+	@{ \
+	  echo '<?xml version="1.0"?>' ; \
+	  echo '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' ; \
+	  echo '	<rootfiles>' ; \
+	  for o in ${opf} ; do \
+	    printf '\t\t<rootfile full-path="OEBPS/%s" media-type="application/oebps-package+xml"/>\n' "$${o}" ; \
+	   done ; \
+	  echo '	</rootfiles>' ; \
+	  echo '</container>' ; \
+	} >"${@}"
+
+endif
 
 # Creating raster images from SVG ##############################################
 $(builddir)/OEBPS/%.png : $(builddir)/OEBPS/%.svg
 	$(call cmd_svg_to_png,$<,$@)
-
-# Creating directories #########################################################
-$(builddir)/OEBPS : | $(builddir)
-	-@echo "Creating OEBPS... "
-	@cd $(builddir) && mkdir OEBPS
-
-$(builddir)/META-INF : | $(builddir)
-	-@echo "Creating META-INF... "
-	@cd $(builddir) && mkdir META-INF
-
-$(builddir) :
-	@mkdir $(builddir)
 
 # Check target #################################################################
 check : $(epub)
