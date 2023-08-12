@@ -3,24 +3,14 @@
 set -e
 set -u
 
+. ../testlib.sh
+
 
 # Make the book ########################################################
 
-make -f ../../src/Makefile
+require make -f ../../src/Makefile
 
 
-# Run epubcheck on it ##################################################
+# Run epubcheck ########################################################
 
-epubcheck_version=5.1.0
-
-if [ ! -d ../epubcheck-${epubcheck_version} ]
-then
-	if [ ! -f ../epubcheck-${epubcheck_version}.zip ]
-	then
-		( cd .. && wget -q https://github.com/w3c/epubcheck/releases/download/v${epubcheck_version}/epubcheck-${epubcheck_version}.zip )
-	fi
-
-	( cd .. && unzip epubcheck-${epubcheck_version}.zip )
-fi
-
-java -jar ../epubcheck-${epubcheck_version}/epubcheck.jar test-book.epub
+epubcheck 5.1.0 test-book.epub
