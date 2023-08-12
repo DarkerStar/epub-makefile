@@ -27,6 +27,58 @@ set -e
 set -u
 
 
+# Support colourization ################################################
+
+format_reset=
+
+format_bold=
+
+format_fg_cyan=
+format_fg_green=
+format_fg_red=
+
+report()
+{
+	printf '%s%s%s\n' "${format_bold}" "${*}" "${format_reset}"
+}
+
+report_test()
+{
+	report "${format_fg_cyan}[TEST]:" "${@}"
+}
+
+report_pass()
+{
+	report "${format_fg_green}[PASS]:" "${@}"
+}
+
+report_fail()
+{
+	report "${format_fg_red}[FAIL]:" "${@}"
+}
+
+report_result()
+{
+	report "${format_fg_cyan}[RESULT]:" "${@}"
+}
+
+if [ -t 1 ]
+then
+	colours=$(tput colors)
+
+	if [ -n "${colours}" ] && [ "${colours}" -ge 8 ]
+	then
+		format_reset=$(tput sgr0)
+
+		format_bold=$(tput bold)
+
+		format_fg_cyan=$(tput setaf 6)
+		format_fg_green=$(tput setaf 2)
+		format_fg_red=$(tput setaf 1)
+	fi
+fi
+
+
 # Keep track of number of tests passed and failed ######################
 
 tests_passed=0
@@ -54,13 +106,13 @@ do
 		if [ -f "${d}/run-test" ] && [ -x "${d}/run-test" ]
 		then
 			# Run the test.
-			printf '[TEST] %s...\n' "${d}"
+			report_test "${d}"
 			if ( cd -- "${d}" && ./run-test )
 			then
-				printf '[PASS] %s\n' "${d}"
+				report_pass "${d}"
 				tests_passed=$(expr "${tests_passed}" + 1)
 			else
-				printf '[FAIL] %s\n' "${d}"
+				report_fail "${d}"
 				tests_failed=$(expr "${tests_failed}" + 1)
 			fi
 		fi
@@ -72,10 +124,13 @@ done
 
 if [ "${tests_passed}" = 0 ] && [ "${tests_failed}" = 0 ]
 then
-	printf 'No tests.\n'
+	report_result 'No tests.'
 elif [ "${tests_failed}" = 0 ]
 then
-	printf 'All tests passed.\n'
+	report_result "${format_fg_green}All tests passed."
+elif [ "${tests_passed}" = 0 ]
+then
+	report_result "${format_fg_red}All tests failed; ${tests_failed} failures."
 else
-	printf 'All tests complete: %d passed; %d failed.\n' "${tests_passed}" "${tests_failed}"
+	report_result "All tests complete: ${format_fg_green}${tests_passed} passed${format_fg_cyan}; ${format_fg_red}${tests_passed} failed${format_fg_cyan}."
 fi

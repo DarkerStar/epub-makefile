@@ -3,6 +3,7 @@
 set -e
 set -u
 
+
 # Make the book ########################################################
 
 make -f ../../src/Makefile
