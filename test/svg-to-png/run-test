@@ -11,12 +11,9 @@ set -u
 require make -f ../../src/Makefile
 
 
-# Make sure the PNG is in the book #####################################
+# Make sure the PNG is in the book and the SVG is not ##################
 
 check unzip -Zs1 test-book.epub OEBPS/image.png >/dev/null 2>/dev/null
-
-
-# Make sure the SVG is NOT in the book #################################
 
 check ! unzip -Zs1 test-book.epub OEBPS/image.svg >/dev/null 2>/dev/null
 
