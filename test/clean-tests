@@ -30,6 +30,8 @@ set -u
 # For each directory that has a valid test name and a 'clean-test' exe,
 # run the exe.
 
+okay=true
+
 for d in */
 do
 	# Strip trailing slash.
@@ -48,7 +50,9 @@ do
 		if [ -f "${d}/clean-test" ] && [ -x "${d}/clean-test" ]
 		then
 			# Run it.
-			( cd -- "${d}" && ./clean-test )
+			( cd -- "${d}" && ./clean-test ) || okay=false
 		fi
 	fi
 done
+
+${okay}
