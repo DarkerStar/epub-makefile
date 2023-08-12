@@ -1,6 +1,11 @@
 EPUB building makefile
 ======================
 
+[![Release][release-shield]][release-url]
+[![GPLv3][license-shield]][license-url]
+[![Tests status][tests-shield]][tests-url]
+[![GitHub top language][language-shield]][repo-url]
+
 
 What is it?
 -----------
@@ -583,6 +588,16 @@ Contacts
 
 For contact information, check out the
 [github project page](https://github.com/DarkerStar/epub-makefile).
+
+
+[repo-url]: https://github.com/DarkerStar/epub-makefile
+[release-url]: https://github.com/DarkerStar/epub-makefile/releases
+[release-shield]: https://img.shields.io/github/v/release/DarkerStar/epub-makefile?include_prereleases&sort=semver
+[license-url]: ../LICENSE
+[license-shield]: https://img.shields.io/github/license/DarkerStar/epub-makefile.svg
+[tests-url]: https://github.com/DarkerStar/epub-makefile/actions/workflows/run-tests.yaml
+[tests-shield]: https://img.shields.io/github/actions/workflow/status/DarkerStar/epub-makefile/run-tests.yaml
+[language-shield]: https://img.shields.io/github/languages/top/DarkerStar/epub-makefile.svg
 
 
 <!-- vim: syntax=Markdown -->
