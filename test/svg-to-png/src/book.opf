@@ -1,0 +1,15 @@
+<package version="3.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="book-id">
+	<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<dc:identifier id="book-id">urn:uuid:a0d94810-b7b7-11e4-9f5c-0800200c9a66</dc:identifier>
+		<dc:title id="title">Title</dc:title>
+		<dc:language>en</dc:language>
+		<meta property="dcterms:modified">2023-08-11T00:00:00Z</meta>
+	</metadata>
+	<manifest>
+		<item id="book"  href="book.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+		<item id="image" href="image.png"  media-type="image/png"/>
+	</manifest>
+	<spine>
+		<itemref idref="book"/>
+	</spine>
+</package>
