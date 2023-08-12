@@ -131,6 +131,8 @@ then
 elif [ "${tests_passed}" = 0 ]
 then
 	report_result "${format_fg_red}All tests failed; ${tests_failed} failures."
+	exit 1
 else
 	report_result "All tests complete: ${format_fg_green}${tests_passed} passed${format_fg_cyan}; ${format_fg_red}${tests_failed} failed${format_fg_cyan}."
+	exit 1
 fi
