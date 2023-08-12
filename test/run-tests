@@ -1,0 +1,81 @@
+#!/bin/sh
+
+########################################################################
+#                                                                      #
+# This file is part of Indi's EPUB Makefile project.                   #
+#                                                                      #
+# Indi's EPUB Makefile project is free software: you can               #
+# redistribute it and/or modify it under the terms of the              #
+# GNU General Public License as published by the                       #
+# Free Software Foundation, either version 3 of the License,           #
+# or (at your option) any later version.                               #
+#                                                                      #
+# Indi's EPUB Makefile project is distributed in the hope that         #
+# it will be useful, but WITHOUT ANY WARRANTY; without even            #
+# the implied warranty of MERCHANTABILITY or                           #
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License #
+# for more details.                                                    #
+#                                                                      #
+# You should have received a copy of the GNU General Public License    #
+# along with Indi's EPUB Makefile project.                             #
+# If not, see <https://www.gnu.org/licenses/>.                         #
+#                                                                      #
+########################################################################
+
+
+set -e
+set -u
+
+
+# Keep track of number of tests passed and failed ######################
+
+tests_passed=0
+tests_failed=0
+
+
+# For each directory that has a valid test name (and a 'run-test' exe),
+# run the test.
+
+for d in */
+do
+	# Strip trailing slash.
+	d="${d%/}"
+
+	# If no directories were found, then 'd' will be '*'. Skip it.
+	if [ "${d}" = '*' ]
+	then
+		continue
+	fi
+
+	# Check that the directory has a valid test name.
+	if printf '%s' "${d}" | grep -q '^[a-z][a-z0-9]*\(-[a-z0-9]\+\)*$'
+	then
+		# Check that a 'run-test' executable exists.
+		if [ -f "${d}/run-test" ] && [ -x "${d}/run-test" ]
+		then
+			# Run the test.
+			printf '[TEST] %s...\n' "${d}"
+			if ( cd -- "${d}" && ./run-test )
+			then
+				printf '[PASS] %s\n' "${d}"
+				tests_passed=$(expr "${tests_passed}" + 1)
+			else
+				printf '[FAIL] %s\n' "${d}"
+				tests_failed=$(expr "${tests_failed}" + 1)
+			fi
+		fi
+	fi
+done
+
+
+# Print the results of all tests #######################################
+
+if [ "${tests_passed}" = 0 ] && [ "${tests_failed}" = 0 ]
+then
+	printf 'No tests.\n'
+elif [ "${tests_failed}" = 0 ]
+then
+	printf 'All tests passed.\n'
+else
+	printf 'All tests complete: %d passed; %d failed.\n' "${tests_passed}" "${tests_failed}"
+fi

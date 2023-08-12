@@ -1,17 +1,21 @@
 # EPUB building makefile AUTHORS file
 # 
-# Copyright 2016 Mark A. Gibbs <indi.in.the.wired@gmail.com>
+# Copyright 2016-2023 Mark A. Gibbs <indi.in.the.wired@gmail.com>
 # 
 # Copying and distribution of this file, with or without modification, are
 # permitted in any medium without royalty provided the copyright notice and this
 # notice are preserved. This file is offered as-is, without any warranty.
 # 
-# Also see the ChangeLog and THANKS files.
+# Also see the THANKS file.
 
 
 
 Mark A. Gibbs                                      <indi.in.the.wired@gmail.com>
 --------------------------------------------------------------------------------
 
-  created      -> AUTHORS, ChangeLog, COPYING, INSTALL, NEWS, README, README.md,
-                  THANKS, Makefile, book.mk
+  created      -> AUTHORS, LICENSE, NEWS, README, THANKS,
+                  src/Makefile, src/book.mk,
+                  test/run-tests, test/clean-tests,
+                  test/minimal,
+                  .gitattributes,
+                  .github/workflows/run-tests.yaml
