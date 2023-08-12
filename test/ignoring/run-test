@@ -11,6 +11,11 @@ set -u
 require make -f ../../src/Makefile
 
 
+# Make sure the extra file is not in the book ##########################
+
+check ! unzip -Zs1 test-book.epub OEBPS/extra-file.xhtml >/dev/null 2>/dev/null
+
+
 # Run epubcheck ########################################################
 
 epubcheck 5.1.0 test-book.epub

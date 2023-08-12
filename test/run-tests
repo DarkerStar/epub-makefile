@@ -44,22 +44,22 @@ report()
 
 report_test()
 {
-	report "${format_fg_cyan}[TEST]:" "${@}"
+	report "${format_fg_cyan}[RUNNING TEST]:" "${@}"
 }
 
 report_pass()
 {
-	report "${format_fg_green}[PASS]:" "${@}"
+	report "${format_fg_green}[TEST PASSED]:" "${@}"
 }
 
 report_fail()
 {
-	report "${format_fg_red}[FAIL]:" "${@}"
+	report "${format_fg_red}[TEST FAILED]:" "${@}"
 }
 
 report_result()
 {
-	report "${format_fg_cyan}[RESULT]:" "${@}"
+	report "${format_fg_cyan}[TESTING RESULTS]:" "${@}"
 }
 
 if [ -t 1 ]
@@ -131,6 +131,8 @@ then
 elif [ "${tests_passed}" = 0 ]
 then
 	report_result "${format_fg_red}All tests failed; ${tests_failed} failures."
+	exit 1
 else
-	report_result "All tests complete: ${format_fg_green}${tests_passed} passed${format_fg_cyan}; ${format_fg_red}${tests_passed} failed${format_fg_cyan}."
+	report_result "All tests complete: ${format_fg_green}${tests_passed} passed${format_fg_cyan}; ${format_fg_red}${tests_failed} failed${format_fg_cyan}."
+	exit 1
 fi

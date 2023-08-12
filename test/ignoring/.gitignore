@@ -1,5 +1,3 @@
-#!/bin/sh
-
 ########################################################################
 #                                                                      #
 # This file is part of Indi's EPUB Makefile project.                   #
@@ -22,37 +20,5 @@
 #                                                                      #
 ########################################################################
 
-
-set -e
-set -u
-
-
-# For each directory that has a valid test name and a 'clean-test' exe,
-# run the exe.
-
-okay=true
-
-for d in */
-do
-	# Strip trailing slash.
-	d="${d%/}"
-
-	# If no directories were found, then 'd' will be '*'. Skip it.
-	if [ "${d}" = '*' ]
-	then
-		continue
-	fi
-
-	# Check that the directory has a valid test name.
-	if printf '%s' "${d}" | grep -q '^[a-z][a-z0-9]*\(-[a-z0-9]\+\)*$'
-	then
-		# Check that a 'clean-test' executable exists.
-		if [ -f "${d}/clean-test" ] && [ -x "${d}/clean-test" ]
-		then
-			# Run it.
-			( cd -- "${d}" && ./clean-test ) || okay=false
-		fi
-	fi
-done
-
-${okay}
+build/
+test-book.epub
