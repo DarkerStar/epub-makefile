@@ -1,4 +1,5 @@
 #!/bin/sh
 
 rm -rf -- build/
+rm -f -- image_in_book_matches.temp.png image_in_book_matches.diff.png
 rm -rf -- test-book.epub

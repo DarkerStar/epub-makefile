@@ -7,7 +7,7 @@
 	</metadata>
 	<manifest>
 		<item id="book"  href="book.xhtml" media-type="application/xhtml+xml" properties="nav"/>
-		<item id="image" href="image.png"  media-type="image/png"/>
+		<item id="image" href="test-card.png"  media-type="image/png"/>
 	</manifest>
 	<spine>
 		<itemref idref="book"/>

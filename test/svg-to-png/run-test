@@ -13,9 +13,29 @@ require make -f ../../src/Makefile
 
 # Make sure the PNG is in the book and the SVG is not ##################
 
-check unzip -Zs1 test-book.epub OEBPS/image.png >/dev/null 2>/dev/null
+file_is_in_ebook()
+{
+	unzip -Zs1 test-book.epub OEBPS/"${1}" >/dev/null 2>/dev/null
+}
 
-check ! unzip -Zs1 test-book.epub OEBPS/image.svg >/dev/null 2>/dev/null
+check     file_is_in_ebook test-card.png
+check_not file_is_in_ebook test-card.svg
+
+
+# Check the PNG ########################################################
+
+image_in_book_matches()
+{
+	unzip -p test-book.epub OEBPS/"${1}" >image_in_book_matches.temp.png
+
+	result=$(compare -metric AE "${2}" image_in_book_matches.temp.png image_in_book_matches.diff.png 2>&1)
+
+	rm -f image_in_book_matches.temp.png image_in_book_matches.diff.png
+
+	test "${result}" = 0
+}
+
+check image_in_book_matches test-card.png expected.png
 
 
 # Run epubcheck ########################################################
