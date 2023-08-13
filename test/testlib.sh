@@ -67,8 +67,10 @@ __TEST_check()
 
 check()
 {
-	if ! __TEST_check "${@}"
+	if __TEST_check "${@}"
 	then
+		:
+	else
 		:
 	fi
 }
@@ -76,8 +78,47 @@ check()
 
 require()
 {
-	if ! __TEST_check "${@}"
+	if __TEST_check "${@}"
 	then
+		:
+	else
+		exit 1
+	fi
+}
+
+
+__TEST_check_not()
+{
+	printf "${__TEST_fmt_bold}${__TEST_fmt_fg_cyan}[CHECK]:${__TEST_fmt_reset} ${__TEST_fmt_bold}! %s${__TEST_fmt_reset}\n" "${*}"
+
+	if ! "${@}"
+	then
+		printf "${__TEST_fmt_bold}${__TEST_fmt_fg_green}[ PASS]:${__TEST_fmt_reset} ${__TEST_fmt_bold}! %s${__TEST_fmt_reset}\n" "${*}"
+		return 0
+	else
+		printf "${__TEST_fmt_bold}${__TEST_fmt_fg_red}[ FAIL]:${__TEST_fmt_reset} ${__TEST_fmt_bold}! %s${__TEST_fmt_reset}\n" "${*}"
+		return 1
+	fi
+}
+
+
+check_not()
+{
+	if __TEST_check_not "${@}"
+	then
+		:
+	else
+		:
+	fi
+}
+
+
+require_not()
+{
+	if __TEST_check_not "${@}"
+	then
+		:
+	else
 		exit 1
 	fi
 }
