@@ -47,10 +47,22 @@ cmd_zip_create = rm -f -- "$(1)"
 cmd_zip_store  = zip -X -Z store "$(1)" $(2)
 cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 
-cmd_pngcrush = pngcrush -rem alla -q "${1}" "${1}~" && mv -f -- "${1}~" "${1}"
+# pngcrush ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+EPUB_MAKEFILE_PNGCRUSH ?= xpngcrush
+
+cmd_pngcrush =
+
+# If pngcrush hasn't been actively disabled...
+ifneq ($(strip ${EPUB_MAKEFILE_PNGCRUSH}),)
+# If pngcrush actually works...
+ifeq ($(strip $(shell if ${EPUB_MAKEFILE_PNGCRUSH} --version >/dev/null 2>/dev/null ; then printf '1' ; else printf '0' ; fi)),1)
+cmd_pngcrush = ${EPUB_MAKEFILE_PNGCRUSH} -rem alla -q "${1}" "${1}~" && mv -f -- "${1}~" "${1}"
+endif
+endif
 
 define cmd_svg_to_png =
-	inkscape $(1) --export-png=$(2)
+	#inkscape $(1) --export-png=$(2)
+	convert -background none ${1} ${2}
 	mogrify -background white -alpha remove -alpha off $(2)
 	$(call cmd_pngcrush,$(2))
 endef
