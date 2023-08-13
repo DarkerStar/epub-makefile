@@ -48,7 +48,7 @@ cmd_zip_store  = zip -X -Z store "$(1)" $(2)
 cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 
 # pngcrush ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-EPUB_MAKEFILE_PNGCRUSH ?= xpngcrush
+EPUB_MAKEFILE_PNGCRUSH ?= pngcrush
 
 cmd_pngcrush =
 
