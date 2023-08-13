@@ -50,7 +50,8 @@ cmd_zip_add    = zip -D -g -X "$(1)" $(2)
 cmd_pngcrush = pngcrush -rem alla -q "${1}" "${1}~" && mv -f -- "${1}~" "${1}"
 
 define cmd_svg_to_png =
-	inkscape $(1) --export-png=$(2)
+	#inkscape $(1) --export-png=$(2)
+	convert -background none ${1} ${2}
 	mogrify -background white -alpha remove -alpha off $(2)
 	$(call cmd_pngcrush,$(2))
 endef
