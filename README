@@ -594,12 +594,12 @@ For contact information, check out the
 [repo-url]: https://github.com/DarkerStar/epub-makefile
 [release-url]: https://github.com/DarkerStar/epub-makefile/releases
 [release-shield]: https://img.shields.io/github/v/release/DarkerStar/epub-makefile?include_prereleases&sort=semver
-[license-url]: ../LICENSE
+[license-url]: /LICENSE
 [license-shield]: https://img.shields.io/github/license/DarkerStar/epub-makefile.svg
 [tests-url]: https://github.com/DarkerStar/epub-makefile/actions/workflows/run-tests.yaml
 [tests-shield]: https://img.shields.io/github/actions/workflow/status/DarkerStar/epub-makefile/run-tests.yaml
 [language-shield]: https://img.shields.io/github/languages/top/DarkerStar/epub-makefile.svg
-[code-of-conduct-url]: ../.github/CODE_OF_CONDUCT.md
+[code-of-conduct-url]: /.github/CODE_OF_CONDUCT.md
 [code-of-conduct-shield]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 
 
